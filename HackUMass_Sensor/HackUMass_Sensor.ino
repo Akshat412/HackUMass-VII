@@ -3,15 +3,15 @@ const int trigPin = 9;
 const int echoPin = 10;
 
 // defines variables
-long duration; // duration of sound travel time
-int distance; // distance between water and the sensor
-long timeOn; // total time the shower is used for in one cycle
+long duration = 0; // duration of sound travel time
+int distance = 0; // distance between water and the sensor
+unsigned long timeOn = 0; // total time the shower is used for in one cycle
 
-bool showerState; 
-bool programState;
+bool showerState = false; 
+bool programState = false;
 
-unsigned long startTime;
-unsigned long currentTime;
+unsigned long startTime = 0;
+unsigned long currentTime = 0;
 
 void setup() 
 {
@@ -50,8 +50,13 @@ void sensor()
   }
 }
 
+bool showerStatePrint = false, timeStatePrint = false; 
+int accuracyDelayTime = 100;
+
 void loop() 
 {
+  unsigned long timeThisCycle = 0;
+  
   if(programState == true)
   {
     sensor();
@@ -59,14 +64,30 @@ void loop()
     while(showerState == true)
     {  
       currentTime = millis();
-      unsigned long timeThisCycle = currentTime - startTime;
+      timeThisCycle = currentTime - startTime;
 
-      if(timeThisCycle % 1000 == 0)
+      if(showerStatePrint == false)
       {
-        Serial.println(timeThisCycle / 1000);
+        Serial.println("ON");
+        showerStatePrint = true;
+        timeStatePrint  = false;
       }
-            
+
+      delay(accuracyDelayTime);
       sensor();
     }
+
+    timeOn += timeThisCycle / 1000;
+    
+    if(timeStatePrint == false)
+    {
+      Serial.print("Total Time: ");
+      Serial.println(timeOn);
+
+      showerStatePrint = false;
+      timeStatePrint  = true;
+    }
+
+    delay(accuracyDelayTime);
   } 
 }
