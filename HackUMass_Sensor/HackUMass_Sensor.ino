@@ -13,13 +13,17 @@ bool programState = false;
 unsigned long startTime = 0;
 unsigned long currentTime = 0;
 
+bool timeStatePrint = false; 
+int accuracyDelayTime = 100;
+
+String readString;
+
 void setup() 
 {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  
   Serial.begin(9600); // Starts the serial communication
-
-  programState = true;
 }
 
 void sensor()
@@ -50,15 +54,38 @@ void sensor()
   }
 }
 
-bool showerStatePrint = false, timeStatePrint = false; 
-int accuracyDelayTime = 100;
+void startFunction()
+{
+  while (Serial.available()) 
+  {
+    delay(3); 
+    char c = Serial.read();
+    readString += c; 
+
+    if (readString.length() >0) 
+    {
+      Serial.println(readString);
+    }
+
+    if(readString == "start")
+    {
+      programState = true;
+    }
+
+    readString="";
+  }
+}
 
 void loop() 
 {
   unsigned long timeThisCycle = 0;
+
+  startFunction();
   
   if(programState == true)
   {
+    Serial.println("ON!");
+    
     sensor();
     startTime = millis();
     while(showerState == true)
@@ -66,14 +93,7 @@ void loop()
       currentTime = millis();
       timeThisCycle = currentTime - startTime;
 
-      if(showerStatePrint == false)
-      {
-        Serial.println("ON");
-        showerStatePrint = true;
-        timeStatePrint  = false;
-      }
-
-      delay(accuracyDelayTime);
+      timeStatePrint = false;
       sensor();
     }
 
@@ -81,13 +101,29 @@ void loop()
     
     if(timeStatePrint == false)
     {
-      Serial.print("Total Time: ");
       Serial.println(timeOn);
-
-      showerStatePrint = false;
       timeStatePrint  = true;
     }
 
     delay(accuracyDelayTime);
-  } 
+
+    while (Serial.available()) 
+    {
+      delay(3); 
+      char c = Serial.read();
+      readString += c; 
+
+      if (readString.length() >0) 
+      {
+        Serial.println(readString);
+      }
+
+      if(readString == "stop")
+      {
+        programState = false;
+      }
+
+      readString="";
+    }
+  }   
 }
