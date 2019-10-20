@@ -1,2 +1,2 @@
 # HackUMass VII - Showersnitch
- Website, android app, and hardware-based setup that logs water usage of users
+ Showersnitch is a system that logs the amount of time a user spends in the shower. Why? Because people don’t realize just how much time they spend in the shower. You get comfy in there and before you know it you’ve been wasting a ton of water and time. According to posters in the UMass washrooms, a five minute shower uses 12 gallons of water. So, we hope that the system is going to make people more aware of how inefficient their showering habits are. 
