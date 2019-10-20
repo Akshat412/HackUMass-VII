@@ -1,6 +1,7 @@
 // defines pins numbers
 const int trigPin = 9;
 const int echoPin = 10;
+const int buzzerPin = 5;
 
 // defines variables
 long duration = 0; // duration of sound travel time
@@ -21,6 +22,7 @@ void setup()
 {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  pinMode(buzzerPin, OUTPUT);
   
   Serial.begin(9600); // Starts the serial communication
 }
@@ -61,6 +63,12 @@ void startFunction()
     {
       programState = true;
       //Serial.println("ON!");
+
+      tone(buzzerPin, 1000); 
+      delay(100);        
+      tone(buzzerPin, 2000);  
+      delay(100);
+      noTone(buzzerPin);     
     }
   }
 }
@@ -100,6 +108,12 @@ void loop()
         //Serial.println("OFF!");
         programState = false;
         timeOn = 0;
+
+        tone(buzzerPin, 2000); 
+        delay(100);        
+        tone(buzzerPin, 1000);  
+        delay(100);
+        noTone(buzzerPin);
       }
     }
   }   
