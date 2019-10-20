@@ -14,7 +14,6 @@ unsigned long startTime = 0;
 unsigned long currentTime = 0;
 
 bool timeStatePrint = false; 
-int accuracyDelayTime = 100;
 
 String readString;
 
@@ -56,23 +55,13 @@ void sensor()
 
 void startFunction()
 {
-  while (Serial.available()) 
+  if(Serial.available() > 0)
   {
-    delay(3); 
-    char c = Serial.read();
-    readString += c; 
-
-    if (readString.length() >0) 
-    {
-      Serial.println(readString);
-    }
-
-    if(readString == "start")
+    if(Serial.parseInt() == 1)
     {
       programState = true;
+      //Serial.println("ON!");
     }
-
-    readString="";
   }
 }
 
@@ -83,9 +72,7 @@ void loop()
   startFunction();
   
   if(programState == true)
-  {
-    Serial.println("ON!");
-    
+  {    
     sensor();
     startTime = millis();
     while(showerState == true)
@@ -101,29 +88,19 @@ void loop()
     
     if(timeStatePrint == false)
     {
-      Serial.println(timeOn);
+      //Serial.println(timeOn);
       timeStatePrint  = true;
     }
 
-    delay(accuracyDelayTime);
-
-    while (Serial.available()) 
+    if(Serial.available() > 0)
     {
-      delay(3); 
-      char c = Serial.read();
-      readString += c; 
-
-      if (readString.length() >0) 
+      if(Serial.parseInt() == 0)
       {
-        Serial.println(readString);
-      }
-
-      if(readString == "stop")
-      {
+        Serial.println(timeOn);
+        //Serial.println("OFF!");
         programState = false;
+        timeOn = 0;
       }
-
-      readString="";
     }
   }   
 }
