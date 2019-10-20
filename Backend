@@ -1,9 +1,11 @@
 const express = require('express');
 const admin = require('firebase-admin');
-import { defaultValues } from "./defaultValues";
+const defaultValues = require("./defaultValues");
 
 
 const app = express();
+
+const { users } = defaultValues.users;
 
 var refreshToken; // Get refresh token from OAuth2 flow
 
@@ -12,27 +14,46 @@ admin.initializeApp({
   databaseURL: "https://hackumass-3445e.firebaseio.com"
 });
 
-// Set the configuration for your app
-  var config = {
-    apiKey: "apiKey",
-    databaseURL: "https://hackumass-3445e.firebaseio.com"
+<script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+
+<script>
+  // Web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBQOOe0dxHaZx_OLe3VEuAPvCOgjivoblc",
+    authDomain: "hackumass-3445e.firebaseapp.com",
+    databaseURL: "https://hackumass-3445e.firebaseio.com",
+    projectId: "hackumass-3445e",
+    storageBucket: "hackumass-3445e.appspot.com",
+    messagingSenderId: "972457982422",
+    appId: "1:972457982422:web:dd7f69d9f548ee509d0c77",
+    measurementId: "G-Y6QHK2KDVV"
   };
-  firebase.initializeApp(config);
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
 
   // Get a reference to the database service
   var database = firebase.database();
-
-  function writeUserData(userId, name, email) {
-    firebase.database().ref('users/' + userId).set({
-      username: name,
-      email: email,
+ 
+  database.once("open", () => {
+    console.log("connected to the database");
+  });
+  
+  function writeUserData(userId, name) {
+    firebase.database().ref('/users/' + userId).set({
+      name: name
     });
   }
 
-var userId = firebase.auth().currentUser.uid;
-return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-  var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
-});
+  function readDataOnce(userId, name) {
+    var userId = firebase.auth().currentUser.uid;
+        return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+        var username = (snapshot.val() && snapshot.val().name) || 'Anonymous';
+    });
+}
 
 const PORT = process.env.PORT || 3000;
 
